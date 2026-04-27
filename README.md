@@ -3,7 +3,7 @@
 [![Project Status: Completed](https://img.shields.io/badge/Project%20Status-Completed-green.svg)](https://github.com/DruzhnininIA/isdn-bri-arduino)
 [![Board: Arduino Nano](https://img.shields.io/badge/Board-Arduino%20Nano-00979D.svg)](https://www.arduino.cc/)
 
-<img width="1803" height="659" alt="Image" src="https://github.com/user-attachments/assets/acdc7693-e2c1-4099-a8e2-244824bc1e77" />
+<img width="1803" height="659" alt="Image" src="https://github.com/user-attachments/assets/b7d39b7d-1e04-4deb-b874-6e59d6217ea6" />
 
 ## Обзор проекта
 Данный проект представляет собой действующую программно-аппаратную модель интерфейса базового доступа (**BRI**) сети **ISDN**. Система эмулирует логику физического и канального уровней передачи данных по архитектуре **2B+D**, используя метод временного мультиплексирования (**TDM**).
@@ -51,5 +51,4 @@
 ## Результаты верификации
 В ходе тестирования подтверждена полная **независимость каналов**: изменение данных в канале B1 (вращение потенциометра) не вызывает задержек или искажений в канале телеметрии B2 и не влияет на скорость срабатывания сигнализации в канале D.
 
----
 *Проект разработан в рамках написания курсовой работы по дисциплине Аппаратные средства телекоммуникационных систем.*
