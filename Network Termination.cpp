@@ -2,26 +2,35 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-SoftwareSerial Line(2, 3);
+SoftwareSerial Line(2, 3); // Медный канал
 LiquidCrystal_I2C lcd(0x27, 16, 2); 
+
+const int LED_SYNC = 5;
+const int LED_CALL = 6;
 
 void setup() {
   Line.begin(9600);
   lcd.init();
   lcd.backlight();
-  pinMode(5, 1);
-  pinMode(6, 1); 
+  
+  pinMode(LED_SYNC, OUTPUT);
+  pinMode(LED_CALL, OUTPUT);
+  
+  lcd.setCursor(0, 0);
+  lcd.print("Druzhinin I.A.");
+  delay(1000);
+  lcd.clear();
 }
 
 void loop() {
-  // Ожидаем заполнения буфера
+  // Заполнение буфера
   if (Line.available() >= 4) {
-    if (Line.read() == 0xAF) { // Синхробайт 0xAF
+    if (Line.read() == 0xAF) { // Синхробайт
       byte b1 = Line.read();
       byte b2 = Line.read();
       byte d = Line.read();
 
-      // Отображение данных на LCD
+      // LCD
       lcd.setCursor(0, 0);
       lcd.print("B1:"); lcd.print(b1); 
       lcd.print(" B2:"); lcd.print(b2); lcd.print("cm   ");
@@ -35,7 +44,7 @@ void loop() {
         digitalWrite(6, 0);
       }
       
-      // Индикация приёма кадра
+      // Светодиод, отображающий принятие кадра
       digitalWrite(5, !digitalRead(5)); 
     }
   }
