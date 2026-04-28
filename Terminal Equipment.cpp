@@ -12,7 +12,7 @@ void setup() {
 
 void loop() {
   // Канал B1
-  byte b1_data = map(analogRead(POT_PIN), 0, 1023, 0, 255); [cite: 54]
+  byte b1_data = map(analogRead(POT_PIN), 0, 1023, 0, 255);
 
   // Канал B2
   digitalWrite(TRIG_PIN, 0);
