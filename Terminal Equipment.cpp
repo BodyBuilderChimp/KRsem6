@@ -1,39 +1,51 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial LineOut(2, 3); 
+
 const int POT_PIN = A0;      // Потенциометр (B1)
-const int TRIG_PIN = 9;      // УЗ-датчик - Trig (B2)
-const int ECHO_PIN = 10;     // УЗ-датчик - Echo (B2)
-const int BUTTON_PIN = 2;    // Кнопка сигнализации (D)
+const int TRIG_PIN = 7;      // Дальномер (B2) Trig
+const int ECHO_PIN = 8;      // Дальномер (B2) Echo
+const int BUTTON_PIN = 4;    // Кнопка (D)
 
 void setup() {
-  Serial.begin(9600);        // Скорость ISDN
-  pinMode(TRIG_PIN, 1);
-  pinMode(ECHO_PIN, 0);
-  pinMode(BUTTON_PIN, 2);
+  Serial.begin(9600);
+  LineOut.begin(9600);
+  
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 }
 
 void loop() {
-  // Канал B1
+  // B1
   byte b1_data = map(analogRead(POT_PIN), 0, 1023, 0, 255);
 
-  // Канал B2
-  digitalWrite(TRIG_PIN, 0);
+  // B2
+  digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, 1);
+  digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, 0);
-  long duration = pulseIn(ECHO_PIN, 1);
-  byte b2_data = constrain(duration * 0.034 / 2, 0, 255); 
+  digitalWrite(TRIG_PIN, LOW);
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  byte b2_data = constrain(duration * 0.034 / 2, 0, 255);
 
-  // Канал D
-  byte d_data = (digitalRead(BUTTON_PIN) == 0) ? 1 : 0; 
+  // D
+  byte d_data = (digitalRead(BUTTON_PIN) == 1) ? 1 : 0;
 
-  // Формирование и отправка TDM-кадра
+  // TDM
   byte frame[4];
-  frame[0] = 0xAF;    // Маркер синхронизации
-  frame[1] = b1_data; // Оцифрованный "голос" (B1)
-  frame[2] = b2_data; // Телеметрия (B2)
-  frame[3] = d_data;  // Сигнализация (D)
+  frame[0] = 0xAF;    // Синхробайт
+  frame[1] = b1_data;
+  frame[2] = b2_data;
+  frame[3] = d_data;
 
-  Serial.write(frame, 4); // Отправка пакета в линию
-  
-  delay(100); // Частота обновления кадра
+  // Отправка кадра
+  LineOut.write(frame, 4);
+
+  // В контроль для проверки
+  Serial.print("Sent: B1="); Serial.print(b1_data);
+  Serial.print(" B2="); Serial.print(b2_data);
+  Serial.print(" D="); Serial.println(d_data);
+
+  delay(100); // Кадр отправляется 10 раз в секунду
 }
